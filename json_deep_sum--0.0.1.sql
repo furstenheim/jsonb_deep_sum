@@ -2,7 +2,7 @@
 
 create function json_list(mjson json)
 Returns json
-language plpgsql inmutable strict
+language plpgsql immutable strict
  as $$
    begin
      return mjson->'a';
