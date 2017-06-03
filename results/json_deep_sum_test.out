@@ -1,0 +1,13 @@
+create extension json_deep_sum;
+select json_list('{"a": 1}');
+ json_list 
+-----------
+ 1
+(1 row)
+
+select json_list('{"b": 1}');
+ json_list 
+-----------
+ 
+(1 row)
+
