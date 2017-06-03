@@ -1,0 +1,32 @@
+*** /home/gabi/Gabi/apps/deep_sum/expected/json_deep_sum_test.out	2017-06-03 21:23:44.594148727 +0200
+--- /home/gabi/Gabi/apps/deep_sum/results/json_deep_sum_test.out	2017-06-03 21:33:18.596761834 +0200
+***************
+*** 2,13 ****
+  select json_list('{"a": 1}');
+   json_list 
+  -----------
+!  1
+  (1 row)
+  
+  select json_list('{"b": 1}');
+   json_list 
+  -----------
+!  
+  (1 row)
+  
+--- 2,13 ----
+  select json_list('{"a": 1}');
+   json_list 
+  -----------
+!          1
+  (1 row)
+  
+  select json_list('{"b": 1}');
+   json_list 
+  -----------
+!          1
+  (1 row)
+  
+
+======================================================================
+
