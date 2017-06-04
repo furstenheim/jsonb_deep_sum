@@ -1,32 +1,39 @@
 *** /home/gabi/Gabi/apps/deep_sum/expected/json_deep_sum_test.out	2017-06-03 21:23:44.594148727 +0200
---- /home/gabi/Gabi/apps/deep_sum/results/json_deep_sum_test.out	2017-06-04 10:52:35.087539636 +0200
+--- /home/gabi/Gabi/apps/deep_sum/results/json_deep_sum_test.out	2017-06-04 12:31:52.632297508 +0200
 ***************
-*** 2,13 ****
-  select json_list('{"a": 1}');
+*** 1,13 ****
+  create extension json_deep_sum;
+! select json_list('{"a": 1}');
    json_list 
   -----------
 !  1
   (1 row)
   
-  select json_list('{"b": 1}');
+! select json_list('{"b": 1}');
    json_list 
   -----------
 !  
   (1 row)
   
---- 2,13 ----
-  select json_list('{"a": 1}');
+--- 1,18 ----
+  create extension json_deep_sum;
+! select json_list('{"a": 2, "b": 1}', '{"a": 2}');
    json_list 
   -----------
-!          1
+!  t
   (1 row)
   
-  select json_list('{"b": 1}');
+! select json_list('{"b": 1}', '{"a": 2}');
    json_list 
   -----------
-!          1
+!  f
   (1 row)
   
++ select json_list('1');
++ ERROR:  function json_list(unknown) does not exist
++ LINE 1: select json_list('1');
++                ^
++ HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
 
 ======================================================================
 
