@@ -34,25 +34,20 @@ json_list(PG_FUNCTION_ARGS)
 
  if (r1 != WJB_BEGIN_OBJECT || r2 != WJB_BEGIN_OBJECT)
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Iterator was not an object")));
- pushJsonbValue(&state, WJB_BEGIN_OBJECT, NULL);
- res = pushJsonbValue(&state, WJB_END_OBJECT, NULL);
 
- PG_RETURN_JSONB(JsonbValueToJsonb(res));
- /* pushJsonbValue(state, r1, NULL); // Start object
+ pushJsonbValue(&state, r1, NULL); // Start object
  r1 = JsonbIteratorNext(&it1, &v1, true);
  r2 = JsonbIteratorNext(&it2, &v2, true);
- PG_RETURN_NULL();
- 
  
  while (r1 != WJB_END_OBJECT || r2 != WJB_END_OBJECT)
  {
   if (r1 == WJB_END_OBJECT) {
-    pushJsonbValue(state, r2, &v2);
+    pushJsonbValue(&state, r2, &v2);
     r2 = JsonbIteratorNext(&it2, &v2, true);
     continue;
   }
   if (r2 == WJB_END_OBJECT) {
-    pushJsonbValue(state, r1, &v1);
+    pushJsonbValue(&state, r1, &v1);
     r1 = JsonbIteratorNext(&it1, &v1, true);
     continue;
   }
@@ -61,11 +56,11 @@ json_list(PG_FUNCTION_ARGS)
     r1 = JsonbIteratorNext(&it1, &v1, true);
  }
 
- res = pushJsonbValue(state, WJB_END_OBJECT, NULL);
+ res = pushJsonbValue(&state, WJB_END_OBJECT, NULL);
  
  Assert(res != NULL);
 
  PG_RETURN_JSONB(JsonbValueToJsonb(res));
 
-*/
+
 }
