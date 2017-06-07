@@ -1,6 +1,5 @@
 create extension json_deep_sum;
 select json_list('{"a": 2, "b": 1}', '{"a": 2}');
-INFO:  difference is 0
 server closed the connection unexpectedly
 	This probably means the server terminated abnormally
 	before or while processing the request.
