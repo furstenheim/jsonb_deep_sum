@@ -1,42 +1,28 @@
 *** /home/gabi/Gabi/apps/deep_sum/expected/json_deep_sum_test.out	2017-06-03 21:23:44.594148727 +0200
---- /home/gabi/Gabi/apps/deep_sum/results/json_deep_sum_test.out	2017-06-07 21:43:29.000863510 +0200
+--- /home/gabi/Gabi/apps/deep_sum/results/json_deep_sum_test.out	2017-06-07 22:28:24.519593392 +0200
 ***************
 *** 1,13 ****
   create extension json_deep_sum;
 ! select json_list('{"a": 1}');
-   json_list 
-  -----------
+!  json_list 
+! -----------
 !  1
-  (1 row)
-  
+! (1 row)
+! 
 ! select json_list('{"b": 1}');
-   json_list 
-  -----------
+!  json_list 
+! -----------
 !  
-  (1 row)
-  
---- 1,21 ----
+! (1 row)
+! 
+--- 1,7 ----
   create extension json_deep_sum;
 ! select json_list('{"a": 2, "b": 1}', '{"a": 2}');
-   json_list 
-  -----------
-!  {"b": 1}
-  (1 row)
-  
-! select json_list('{"b": 1}', '{"a": 2}');
-   json_list 
-  -----------
-!  {}
-  (1 row)
-  
-+ select json_list('{}', '{"a": 2}');
-+  json_list 
-+ -----------
-+  {"a": 2}
-+ (1 row)
-+ 
-+ select json_list('1', '{"a": 1}');
-+ ERROR:  Can only sum objects
+! INFO:  difference is 0
+! server closed the connection unexpectedly
+! 	This probably means the server terminated abnormally
+! 	before or while processing the request.
+! connection to server was lost
 
 ======================================================================
 
