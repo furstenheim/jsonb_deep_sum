@@ -78,7 +78,8 @@ json_list(PG_FUNCTION_ARGS)
  while (r1 != WJB_END_OBJECT || r2 != WJB_END_OBJECT)
  {
    int difference;
-   Datum sum;
+ //  Datum sum;
+   JsonbValue newValue; 
   if (r1 == WJB_END_OBJECT) {
     pushJsonbValue(&state, r2, &v2);
     r2 = JsonbIteratorNext(&it2, &v2, true);
@@ -109,12 +110,15 @@ json_list(PG_FUNCTION_ARGS)
  r1 = JsonbIteratorNext(&it1, &v1, true);
  // TODO jbvString, jbvNull and jbvBool
  // need to alloc memory here?
- sum = (DirectFunctionCall2(numeric_sum, PointerGetDatum(
-    (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric)));
+// sum = DatumGetNumeric((DirectFunctionCall2(numeric_sum, PointerGetDatum(
+ //   (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric))));
+ newValue.type = jbvNumeric;
+ 
+ newValue.val.numeric = DatumGetNumeric((DirectFunctionCall2(numeric_add, PointerGetDatum(
+    (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric))));
+// elog(INFO, "value is %0.2f", newValue.val.numeric);
 
-// is it alright to modify v1 here?
- (&v1)->val.numeric = sum;
- pushJsonbValue(&state, r1, &v1);
+ pushJsonbValue(&state, WJB_VALUE, &newValue);
  r2 = JsonbIteratorNext(&it2, &v2, true);
  r1 = JsonbIteratorNext(&it1, &v1, true);
 
