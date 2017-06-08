@@ -41,9 +41,9 @@ lengthCompareJsonbStringValue(const void *a, const void *b)
 
 
 
-PG_FUNCTION_INFO_V1(json_list);
+PG_FUNCTION_INFO_V1(jsonb_deep_add);
 Datum
-json_list(PG_FUNCTION_ARGS)
+jsonb_deep_add(PG_FUNCTION_ARGS)
 {
  Jsonb *jb1 = PG_GETARG_JSONB(0);
  Jsonb *jb2 = PG_GETARG_JSONB(1);
@@ -94,13 +94,27 @@ json_list(PG_FUNCTION_ARGS)
  // first key is smaller
  if (difference < 0) {
   pushJsonbValue(&state, r1, &v1);
-  r1 = JsonbIteratorNext(&it1, &v1, true);
-  pushJsonbValue(&state, r1, &v1);
-  r1 = JsonbIteratorNext(&it1, &v1, true);
+  r1 = JsonbIteratorNext(&it1, &v1, false);
+  if (r1 == WJB_BEGIN_OBJECT) {
+    // push all object
+    pushJsonbValue(&state, r1, &v1);
+    while ((r1 = JsonbIteratorNext(&it1, &v1, false) != WJB_END_OBJECT)) {
+        pushJsonbValue(&state, r1, &v1); 
+    }
+    pushJsonbValue(&state, r1, &v1);
+  } else if ((&v2)->type == jbvNumeric) {
+    pushJsonbValue(&state, r1, &v1);
+  } else {
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+  }
+  r1 = JsonbIteratorNext(&it1, &v1, false);
   continue;
  } else if (difference > 0) {
   pushJsonbValue(&state, r2, &v2);
   r2 = JsonbIteratorNext(&it2, &v2, true);
+  if ((&v2)->type != jbvNumeric)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+
   pushJsonbValue(&state, r2, &v2);
   r2 = JsonbIteratorNext(&it2, &v2, true);
   continue;
@@ -108,15 +122,15 @@ json_list(PG_FUNCTION_ARGS)
  pushJsonbValue(&state, r1, &v1);
  r2 = JsonbIteratorNext(&it2, &v2, true);
  r1 = JsonbIteratorNext(&it1, &v1, true);
+ if ((&v1)->type != jbvNumeric || (&v2)->type != jbvNumeric)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+
+
  // TODO jbvString, jbvNull and jbvBool
- // need to alloc memory here?
-// sum = DatumGetNumeric((DirectFunctionCall2(numeric_sum, PointerGetDatum(
- //   (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric))));
  newValue.type = jbvNumeric;
  
  newValue.val.numeric = DatumGetNumeric((DirectFunctionCall2(numeric_add, PointerGetDatum(
     (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric))));
-// elog(INFO, "value is %0.2f", newValue.val.numeric);
 
  pushJsonbValue(&state, WJB_VALUE, &newValue);
  r2 = JsonbIteratorNext(&it2, &v2, true);
