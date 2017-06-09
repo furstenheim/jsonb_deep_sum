@@ -52,7 +52,7 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
  JsonbIteratorToken r1, r2;
  JsonbValue *res;
  JsonbParseState *state = NULL; // Here we create the new jsonb
-
+ int nestedLevel = 0;
  if (jb1 == NULL)
      PG_RETURN_JSONB(jb2);
  if (jb2 == NULL)
@@ -72,14 +72,21 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
         ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Iterator was not an object")));
 
  pushJsonbValue(&state, r1, NULL); // Start object
- r1 = JsonbIteratorNext(&it1, &v1, true);
- r2 = JsonbIteratorNext(&it2, &v2, true);
+ r1 = JsonbIteratorNext(&it1, &v1, false);
+ r2 = JsonbIteratorNext(&it2, &v2, false);
  
- while (r1 != WJB_END_OBJECT || r2 != WJB_END_OBJECT)
+ while (!(r1 == WJB_END_OBJECT && r2 == WJB_END_OBJECT && nestedLevel == 0))
  {
    int difference;
  //  Datum sum;
    JsonbValue newValue; 
+  if (r1 == WJB_END_OBJECT && r2 == WJB_END_OBJECT && nestedLevel > 0) {
+    pushJsonbValue(&state, WJB_END_OBJECT, NULL);
+    r1 = JsonbIteratorNext(&it1, &v1, false);
+    r2 = JsonbIteratorNext(&it2, &v2, false);
+    nestedLevel--;   
+    continue;
+  }
   if (r1 == WJB_END_OBJECT) {
     pushJsonbValue(&state, r2, &v2);
     r2 = JsonbIteratorNext(&it2, &v2, true);
@@ -101,7 +108,7 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
   } else {
   ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
   }
-  r1 = JsonbIteratorNext(&it1, &v1, false);
+  r1 = JsonbIteratorNext(&it1, &v1, true);
   continue;
  } else if (difference > 0) {
   pushJsonbValue(&state, r2, &v2);
@@ -116,21 +123,24 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
   continue;
  }   
  pushJsonbValue(&state, r1, &v1);
- r2 = JsonbIteratorNext(&it2, &v2, true);
- r1 = JsonbIteratorNext(&it1, &v1, true);
- if ((&v1)->type != jbvNumeric || (&v2)->type != jbvNumeric)
-    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
-
-
- // TODO jbvString, jbvNull and jbvBool
- newValue.type = jbvNumeric;
+ r2 = JsonbIteratorNext(&it2, &v2, false);
+ r1 = JsonbIteratorNext(&it1, &v1,false);
+ if ((&v1)->type == jbvNumeric && (&v2)->type == jbvNumeric) {
+   // TODO jbvString, jbvNull and jbvBool
+     newValue.type = jbvNumeric;
  
- newValue.val.numeric = DatumGetNumeric((DirectFunctionCall2(numeric_add, PointerGetDatum(
-    (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric))));
+     newValue.val.numeric = DatumGetNumeric((DirectFunctionCall2(numeric_add, PointerGetDatum(
+        (&v1)->val.numeric), PointerGetDatum((&v2)->val.numeric))));
 
- pushJsonbValue(&state, WJB_VALUE, &newValue);
- r2 = JsonbIteratorNext(&it2, &v2, true);
- r1 = JsonbIteratorNext(&it1, &v1, true);
+     pushJsonbValue(&state, WJB_VALUE, &newValue);
+ } else if ((&v1)->type == jbvObject && (&v2)->type == jbvObject) {
+   pushJsonbValue(&state, WJB_BEGIN_OBJECT, NULL);
+   nestedLevel++;   
+ } else {
+   ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+ }
+ r2 = JsonbIteratorNext(&it2, &v2, false);
+ r1 = JsonbIteratorNext(&it1, &v1, false);
 
  }
 

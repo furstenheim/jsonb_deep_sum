@@ -1,5 +1,5 @@
 *** /home/gabi/Gabi/apps/deep_sum/expected/jsonb_deep_sum_test.out	2017-06-03 21:23:44.594148727 +0200
---- /home/gabi/Gabi/apps/deep_sum/results/jsonb_deep_sum_test.out	2017-06-09 19:35:21.347463568 +0200
+--- /home/gabi/Gabi/apps/deep_sum/results/jsonb_deep_sum_test.out	2017-06-09 20:02:13.700559405 +0200
 ***************
 *** 1,13 ****
 ! create extension json_deep_sum;
@@ -15,7 +15,7 @@
 !  
   (1 row)
   
---- 1,59 ----
+--- 1,63 ----
 ! create extension jsonb_deep_sum;
 ! select jsonb_deep_add('{"a": 2, "b": 1}', '{"a": 5}');
 !   jsonb_deep_add  
@@ -64,7 +64,11 @@
 + (1 row)
 + 
 + select jsonb_deep_add('{"a": {"a": 1}}', '{"a": {"a": 2}}');
-+ ERROR:  Only numeric values allowed
++  jsonb_deep_add  
++ -----------------
++  {"a": {"a": 3}}
++ (1 row)
++ 
 + select jsonb_deep_add('{"a": true}', '{"b": 1}');
 + ERROR:  Only numeric values allowed
 + select jsonb_deep_add('{"a": [1, 2, 3,4]}', '{"b": 1}');
