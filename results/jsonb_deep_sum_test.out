@@ -17,6 +17,12 @@ select jsonb_deep_add('{"b": 1}', '{"a": 2}');
  {"a": 2, "b": 1}
 (1 row)
 
+select jsonb_deep_add('{"a": 2}', '{"b": 1}');
+  jsonb_deep_add  
+------------------
+ {"a": 2, "b": 1}
+(1 row)
+
 select jsonb_deep_add('{}', '{"a": 2}');
  jsonb_deep_add 
 ----------------
@@ -28,7 +34,26 @@ ERROR:  Can only sum objects
 select jsonb_deep_add('{"a": "bb"}', '{"b": 1}');
 ERROR:  Only numeric values allowed
 select jsonb_deep_add('{"a": {"a": 1}}', '{"b": 1}');
-server closed the connection unexpectedly
-	This probably means the server terminated abnormally
-	before or while processing the request.
-connection to server was lost
+     jsonb_deep_add      
+-------------------------
+ {"a": {"a": 1}, "b": 1}
+(1 row)
+
+select jsonb_deep_add('{"b": 1}', '{"a": {"a": 1}}');
+     jsonb_deep_add      
+-------------------------
+ {"a": {"a": 1}, "b": 1}
+(1 row)
+
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": {"a": 2}}');
+ERROR:  Only numeric values allowed
+select jsonb_deep_add('{"a": true}', '{"b": 1}');
+ERROR:  Only numeric values allowed
+select jsonb_deep_add('{"a": [1, 2, 3,4]}', '{"b": 1}');
+       jsonb_deep_add        
+-----------------------------
+ {"a": [1, 2, 3, 4], "b": 1}
+(1 row)
+
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": 1}');
+ERROR:  Only numeric values allowed

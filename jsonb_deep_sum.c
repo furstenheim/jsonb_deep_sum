@@ -94,28 +94,24 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
  // first key is smaller
  if (difference < 0) {
   pushJsonbValue(&state, r1, &v1);
-  r1 = JsonbIteratorNext(&it1, &v1, false);
-  if (r1 == WJB_BEGIN_OBJECT) {
-    // push all object
-    pushJsonbValue(&state, r1, &v1);
-    while ((r1 = JsonbIteratorNext(&it1, &v1, false) != WJB_END_OBJECT)) {
-        pushJsonbValue(&state, r1, &v1); 
-    }
-    pushJsonbValue(&state, r1, &v1);
-  } else if ((&v2)->type == jbvNumeric) {
+  r1 = JsonbIteratorNext(&it1, &v1, true);
+ // jbvBinary is returned in skipNested mode
+  if ((&v1)->type == jbvNumeric || (&v1)->type == jbvBinary) {
     pushJsonbValue(&state, r1, &v1);
   } else {
-    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+  ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
   }
   r1 = JsonbIteratorNext(&it1, &v1, false);
   continue;
  } else if (difference > 0) {
   pushJsonbValue(&state, r2, &v2);
   r2 = JsonbIteratorNext(&it2, &v2, true);
-  if ((&v2)->type != jbvNumeric)
-    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
 
-  pushJsonbValue(&state, r2, &v2);
+  if ((&v2)->type == jbvNumeric || (&v2)->type == jbvBinary) {
+    pushJsonbValue(&state, r2, &v2);
+  } else {
+  ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+  }
   r2 = JsonbIteratorNext(&it2, &v2, true);
   continue;
  }   
