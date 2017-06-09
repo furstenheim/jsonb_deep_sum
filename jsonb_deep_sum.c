@@ -137,7 +137,7 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
    pushJsonbValue(&state, WJB_BEGIN_OBJECT, NULL);
    nestedLevel++;   
  } else {
-   ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Only numeric values allowed")));
+   ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Incompatible types")));
  }
  r2 = JsonbIteratorNext(&it2, &v2, false);
  r1 = JsonbIteratorNext(&it1, &v1, false);

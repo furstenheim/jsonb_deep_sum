@@ -9,8 +9,12 @@ select jsonb_deep_add('{"a": "bb"}', '{"b": 1}');
 select jsonb_deep_add('{"a": {"a": 1}}', '{"b": 1}');
 select jsonb_deep_add('{"b": 1}', '{"a": {"a": 1}}');
 select jsonb_deep_add('{"a": {"a": 1}}', '{"a": {"a": 2}}');
+select jsonb_deep_add('{"a": {"a": 1}, "b": 1}', '{"a": {"a": 2}}');
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": {"a": 2}, "b": 1}');
+select jsonb_deep_add('{"a": {"a": {"a": 4}}}', '{"a": {"a": {"a": 3}}}');
 select jsonb_deep_add('{"a": true}', '{"b": 1}');
 select jsonb_deep_add('{"a": [1, 2, 3,4]}', '{"b": 1}');
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": 1}');
 select jsonb_deep_add('{"a": {"a": 1}}', '{"a": 1}');
 
 
