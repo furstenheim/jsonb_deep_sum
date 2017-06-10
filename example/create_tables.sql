@@ -10,9 +10,16 @@ INSERT INTO test_table (info) SELECT
 
 
 SELECT jsonb_deep_sum(info) from test_table;
-
 --- Time: 3705,791 ms
 
+-- https://stackoverflow.com/questions/35129205/postgresql-how-to-sum-all-attributes-in-a-jsonb-field/44471497#44471497
+SELECT json_object_agg(key, val)
+FROM (
+    SELECT key, SUM(value::NUMERIC) val
+    FROM test_table t, jsonb_each_text(info)
+    GROUP BY key
+    ) s;
+---- Time: 11083,089 ms
 
 -- Two levels nesting
 

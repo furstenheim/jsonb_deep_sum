@@ -46,13 +46,13 @@ All the tests are in the sql directory.
 
 The exact queries can be found in `./example`
 
-| Numbers of rows | Level of nesting |  jsonb_deep_sum (ms) |
-| --------------- | ---------------- | --------------- |
-| 2 million       | 0   | 3705,791 |
-| 2 million | 1 | 12014,711
+| Numbers of rows | Level of nesting |  jsonb_deep_sum (ms) | SQL (ms)
+| --------------- | ---------------- | --------------- | ------- |
+| 2 million       | 0   | 3705,791 |  11083,089 |
+| 2 million | 1 | 12014,711 | ?
 
 
-It would be nice to have benchmarks using custom sql aggregate, using PL/V8 and storing the info in plain columns ala hstore.
+It would be nice to have benchmarks using custom sql aggregate, using PL/V8 and storing the info in plain columns à la hstore.
 
 ## INTERNALS
 
