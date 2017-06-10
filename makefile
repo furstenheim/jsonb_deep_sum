@@ -1,6 +1,6 @@
 EXTENSION = jsonb_deep_sum
 DATA = jsonb_deep_sum--0.0.1.sql
-REGRESS	 = jsonb_deep_sum_test
+REGRESS	 = jsonb_deep_add_test jsonb_deep_sum_test
 MODULES = jsonb_deep_sum
 
 # postgres stuff
