@@ -1,13 +1,115 @@
-create extension json_deep_sum;
-select json_list('{"a": 1}');
- json_list 
------------
- 1
+create extension jsonb_deep_sum;
+select jsonb_deep_add('{"a": 2, "b": 1}', '{"a": 5}');
+  jsonb_deep_add  
+------------------
+ {"a": 7, "b": 1}
 (1 row)
 
-select json_list('{"b": 1}');
- json_list 
------------
+select jsonb_deep_add('{"a": 2, "b": 3}', '{"a": 5, "b": 4}');
+  jsonb_deep_add  
+------------------
+ {"a": 7, "b": 7}
+(1 row)
+
+-- Objects with keys in different order
+select jsonb_deep_add('{"b": 2, "a": 3}', '{"a": 5, "b": 4}');
+  jsonb_deep_add  
+------------------
+ {"a": 8, "b": 6}
+(1 row)
+
+-- LHS key greater than RHS
+select jsonb_deep_add('{"b": 1}', '{"a": 2}');
+  jsonb_deep_add  
+------------------
+ {"a": 2, "b": 1}
+(1 row)
+
+-- RHS key greater than LHS
+select jsonb_deep_add('{"a": 2}', '{"b": 1}');
+  jsonb_deep_add  
+------------------
+ {"a": 2, "b": 1}
+(1 row)
+
+-- empty object
+select jsonb_deep_add('{}', '{"a": 2}');
+ jsonb_deep_add 
+----------------
+ {"a": 2}
+(1 row)
+
+-- not an object
+select jsonb_deep_add('1', '{"a": 1}');
+ERROR:  Can only sum objects
+-- NULL object
+select jsonb_deep_add(NULL, '{"a": 1}');
+ jsonb_deep_add 
+----------------
  
 (1 row)
 
+select jsonb_deep_add('{"a": "bb"}', '{"b": 1}');
+ERROR:  Only numeric values allowed
+-- Nested and independent
+select jsonb_deep_add('{"a": {"a": 1}}', '{"b": 1}');
+     jsonb_deep_add      
+-------------------------
+ {"a": {"a": 1}, "b": 1}
+(1 row)
+
+-- Deeply nested and independent
+select jsonb_deep_add('{"a": {"a": {"a": 1}}}', '{"b": 1}');
+         jsonb_deep_add         
+--------------------------------
+ {"a": {"a": {"a": 1}}, "b": 1}
+(1 row)
+
+-- Nested reverse order
+select jsonb_deep_add('{"b": 1}', '{"a": {"a": 1}}');
+     jsonb_deep_add      
+-------------------------
+ {"a": {"a": 1}, "b": 1}
+(1 row)
+
+-- Nested sum
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": {"a": 2}}');
+ jsonb_deep_add  
+-----------------
+ {"a": {"a": 3}}
+(1 row)
+
+-- Nested sum and additional property
+select jsonb_deep_add('{"a": {"a": 1}, "b": 1}', '{"a": {"a": 2}}');
+     jsonb_deep_add      
+-------------------------
+ {"a": {"a": 3}, "b": 1}
+(1 row)
+
+-- Reversed nested sum and additional prooperty
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": {"a": 2}, "b": 1}');
+     jsonb_deep_add      
+-------------------------
+ {"a": {"a": 3}, "b": 1}
+(1 row)
+
+-- Deeply nested sum
+select jsonb_deep_add('{"a": {"a": {"a": 4}}}', '{"a": {"a": {"a": 3}}}');
+     jsonb_deep_add     
+------------------------
+ {"a": {"a": {"a": 7}}}
+(1 row)
+
+select jsonb_deep_add('{"a": true}', '{"b": 1}');
+ERROR:  Only numeric values allowed
+select jsonb_deep_add('{"a": [1, 2, 3,4]}', '{"b": 1}');
+       jsonb_deep_add        
+-----------------------------
+ {"a": [1, 2, 3, 4], "b": 1}
+(1 row)
+
+-- Incompatible objects
+select jsonb_deep_add('{"a": {"a": 1}}', '{"a": 1}');
+ERROR:  Incompatible types
+select jsonb_deep_add('{"a": 1}', '{"a": {"a": 1}}');
+ERROR:  Incompatible types
