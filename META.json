@@ -1,0 +1,27 @@
+{
+  "abstract": "Sum jsonbs recursively",
+  "maintainer": "Furstenheim <furstenheim@gmail.com>",
+  "license": "mit",
+  "provides": {
+      "jsonb_deep_sum": {
+        "file": "jsonb_deep_sum--0.0.1.sql",
+        "version": "0.0.1"
+      }
+  },
+  "meta-spec": {
+    "version": "1.0.0",
+    "url": "http://pgxn.org/meta/spec.txt"
+  },
+  "name": "jsonb_deep_sum",
+  "version": "0.0.1",
+  "description": "jsonb_deep_sum offers functions to sum jsonb recursively",
+  "resources": {
+    "repository": {
+      "url": "https://github.com/furstenheim/jsonb_deep_sum",
+      "type": "git"
+    }
+  },
+  "tags": [
+    "jsonb"
+  ]
+}
