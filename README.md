@@ -1,6 +1,6 @@
 ## Jsonb deep sum
 
-jsonb_deep_sum is an extension to easily add jsonb numeric
+jsonb_deep_sum is a PostgreSQL extension to easily add jsonb numeric
 
     SELECT jsonb_deep_add('{"a": 1}', {"a": 2}');
     > '{"a": 3}'
