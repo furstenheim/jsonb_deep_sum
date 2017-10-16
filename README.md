@@ -1,6 +1,6 @@
 ## Jsonb deep sum
 
-![Build Status](https://travis-ci.org/furstenheim/deep_sum.svg?branch=master)
+![Build Status](https://travis-ci.org/furstenheim/jsonb_deep_sum.svg?branch=master)
 
 jsonb_deep_sum is a PostgreSQL extension to easily add jsonb numeric
 
