@@ -4,8 +4,8 @@
   "license": "mit",
   "provides": {
       "jsonb_deep_sum": {
-        "file": "jsonb_deep_sum--0.0.1.sql",
-        "version": "0.0.1"
+        "file": "jsonb_deep_sum--0.0.2.sql",
+        "version": "0.0.2"
       }
   },
   "meta-spec": {
@@ -13,7 +13,7 @@
     "url": "http://pgxn.org/meta/spec.txt"
   },
   "name": "jsonb_deep_sum",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "jsonb_deep_sum offers functions to sum jsonb recursively",
   "resources": {
     "repository": {
