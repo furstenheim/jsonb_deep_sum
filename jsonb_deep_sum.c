@@ -32,13 +32,13 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
 	int			nestedLevel = 0;
 
 	if (jb1 == NULL)
-		#ifdef PG_GETARG_JSONB_P
+		#ifdef PG_RETURN_JSONB_P
 			PG_RETURN_JSONB_P(jb2);
 		#else
 			PG_RETURN_JSONB(jb2);
 		#endif
 	if (jb2 == NULL)
-		#ifdef PG_GETARG_JSONB_P
+		#ifdef PG_RETURN_JSONB_P
 			PG_RETURN_JSONB_P(jb1);
 		#else
 			PG_RETURN_JSONB(jb1);
@@ -153,7 +153,7 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	#ifdef PG_GETARG_JSONB_P
+	#ifdef PG_RETURN_JSONB_P
 		PG_RETURN_JSONB_P(JsonbValueToJsonb(res));
 	#else
 		PG_RETURN_JSONB(JsonbValueToJsonb(res));
