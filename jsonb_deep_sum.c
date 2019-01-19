@@ -11,8 +11,14 @@ PG_FUNCTION_INFO_V1(jsonb_deep_add);
 Datum
 jsonb_deep_add(PG_FUNCTION_ARGS)
 {
-	Jsonb	   *jb1 = PG_GETARG_JSONB(0);
-	Jsonb	   *jb2 = PG_GETARG_JSONB(1);
+ 	// https://trac.osgeo.org/postgis/ticket/3867
+	#ifdef PG_GETARG_JSONB_P
+		Jsonb	   *jb1 = PG_GETARG_JSONB_P(0);
+		Jsonb	   *jb2 = PG_GETARG_JSONB_P(1);
+	#else
+		Jsonb	   *jb1 = PG_GETARG_JSONB(0);
+		Jsonb	   *jb2 = PG_GETARG_JSONB(1);
+	#endif
 	JsonbIterator *it1,
 			   *it2;
 	JsonbValue	v1,
@@ -26,10 +32,17 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
 	int			nestedLevel = 0;
 
 	if (jb1 == NULL)
-		PG_RETURN_JSONB(jb2);
+		#ifdef PG_RETURN_JSONB_P
+			PG_RETURN_JSONB_P(jb2);
+		#else
+			PG_RETURN_JSONB(jb2);
+		#endif
 	if (jb2 == NULL)
-		PG_RETURN_JSONB(jb1);
-
+		#ifdef PG_RETURN_JSONB_P
+			PG_RETURN_JSONB_P(jb1);
+		#else
+			PG_RETURN_JSONB(jb1);
+		#endif
 	if (!JB_ROOT_IS_OBJECT(jb1) || !JB_ROOT_IS_OBJECT(jb2))
 		ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE), errmsg("Can only sum objects")));
 
@@ -140,9 +153,11 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
 
 	Assert(res != NULL);
 
-	PG_RETURN_JSONB(JsonbValueToJsonb(res));
-
-
+	#ifdef PG_RETURN_JSONB_P
+		PG_RETURN_JSONB_P(JsonbValueToJsonb(res));
+	#else
+		PG_RETURN_JSONB(JsonbValueToJsonb(res));
+	#endif
 }
 
 /* Taken from src/backend/adt/jsonb_utils.c
