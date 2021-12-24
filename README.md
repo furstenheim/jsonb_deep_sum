@@ -25,7 +25,16 @@ It might also happen that pgxs is not found. For that you might need to install 
 Once you have successfully compiled the extension log into postgresql and do:
 
     CREATE EXTENSION jsonb_deep_sum;
-    
+
+### Tests
+
+You can run the tests without installing postgres
+
+```
+docker run -it --rm --mount "type=bind,src=$(pwd),dst=/repo" pgxn/pgxn-tools     sh -c 'cd /repo && pg-start 12 && pg-build-test'
+
+```
+
 
 
 ## EXAMPLE
