@@ -53,6 +53,26 @@ To run the tests use:
 
 All the tests are in the sql directory.
 
+### Running tests interactively in docker
+
+First terminal:
+
+```
+docker stop  pgx-test-v1 && docker rm  pgx-test-v1
+docker run -it --name pgx-test-v1 --mount "type=bind,src=$(pwd),dst=/repo" pgxn/pgxn-tools bash
+pg-start 12
+tail -f /var/log/postgresql/postgresql-12-test.log
+```
+
+Second terminal:
+
+```
+docker exec -it pgx-test-v1 bash
+cd repo/ && make clean  && make all PROFILE="-Werror" && sudo make install
+make installcheck PGUSER=postgres
+```
+
+
 ## BENCHMARKING
 
 The exact queries can be found in `./example`

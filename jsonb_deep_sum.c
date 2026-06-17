@@ -25,11 +25,20 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
 				v2;
 	JsonbIteratorToken r1,
 				r2;
-	JsonbValue *res;
-	JsonbParseState *state = NULL;
 
 	/* Here we create the new jsonb */
 	int			nestedLevel = 0;
+
+	// JsonbInState added in Pg 19
+	// https://github.com/postgres/postgres/commit/0986e95161cec929d8f39c01e9848f34526be421#diff-e2cc4121fa71649fd07c5c71cb382075688efd1e6522e203f2889681532655a4
+	#if PG_VERSION_NUM >= 190000
+    	JsonbInState state;
+    	memset(&state, 0, sizeof(state));
+    #else
+        JsonbParseState *state = NULL;
+        JsonbValue *res;
+    #endif
+
 
 	if (jb1 == NULL)
 		#ifdef PG_RETURN_JSONB_P
@@ -149,12 +158,20 @@ jsonb_deep_add(PG_FUNCTION_ARGS)
 
 	}
 
+    #if PG_VERSION_NUM >= 190000
+	    pushJsonbValue(&state, WJB_END_OBJECT, NULL);
+	#else
 	res = pushJsonbValue(&state, WJB_END_OBJECT, NULL);
+    #endif
 
 	Assert(res != NULL);
 
 	#ifdef PG_RETURN_JSONB_P
-		PG_RETURN_JSONB_P(JsonbValueToJsonb(res));
+	    #if PG_VERSION_NUM >= 190000
+	        PG_RETURN_JSONB_P(JsonbValueToJsonb(state.result));
+	    #else
+		    PG_RETURN_JSONB_P(JsonbValueToJsonb(res));
+		#endif
 	#else
 		PG_RETURN_JSONB(JsonbValueToJsonb(res));
 	#endif
